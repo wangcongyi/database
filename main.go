@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
+	"log"
 )
 
 const (
@@ -21,6 +22,7 @@ func connectDB() *sql.DB {
 	if err != nil {
 		panic(err)
 	} else {
+		fmt.Println("link succeeded")
 		return db
 	}
 }
@@ -48,8 +50,39 @@ func query(db *sql.DB) {
 
 }
 
+func inser(db *sql.DB) {
+	stmt, err := db.Prepare("insert into users(name, email) values ($1,$2)")
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = stmt.Exec("golang", "golangtest@qq.com")
+
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println("insert into users success")
+	}
+}
+
+func delete(db *sql.DB) {
+	stms, err := db.Prepare("DELETE FROM users WHERE id=$1")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = stms.Exec(2)
+
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		fmt.Println("delete from users success")
+	}
+}
+
 func main() {
 	db := connectDB()
 	query(db)
+	inser(db)
+	delete(db)
 }
   
